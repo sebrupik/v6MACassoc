@@ -23,8 +23,8 @@ public final class V6MACassoc {
         this._class = this.getClass().getName();
         
         try {
-            sysProps = this.loadPropsFromFile(settingsTxt, false);
-            psProps =  this.loadPropsFromFile(psTxt, true);
+            sysProps = this.loadPropsFromFile(settingsTxt, true);
+            psProps =  this.loadPropsFromFile(psTxt, false);
             
             assignSystemVariables();
             createDevices(rtrTxt);
@@ -70,12 +70,12 @@ public final class V6MACassoc {
                 in = this.getClass().getClassLoader().getResourceAsStream(p1);
                 
             if (in == null) {
-                System.out.println(_class+"/loadProps - "+p1+ " not found!!!");
+                System.out.println(_class+"/loadPropsFromFile - "+p1+ " not found!!!");
                 tmp_prop = null;
             } else {
                 tmp_prop.load(in);
             }
-        } catch(IOException ioe) { System.out.println(_class+"/loadProps - "+ioe); }
+        } catch(IOException ioe) { System.out.println(_class+"/loadPropsFromFile - "+ioe); }
 
         return tmp_prop;
     }
