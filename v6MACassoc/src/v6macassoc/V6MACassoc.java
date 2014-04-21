@@ -1,5 +1,6 @@
 package v6macassoc;
 
+import v6macassoc.objects.DBConnection;
 import v6macassoc.objects.Device;
 
 import java.io.BufferedReader;
@@ -13,21 +14,27 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 
-public class V6MACassoc {
+public final class V6MACassoc {
     private final String _class;
-    private Properties rtrProps, sysProps;
+    private Properties psProps, sysProps;
+    DBConnection dbcon;
     
-    public V6MACassoc(String rtrTxt, String settingsTxt) {
+    public V6MACassoc(String rtrTxt, String settingsTxt, String psTxt) {
         this._class = this.getClass().getName();
         
         try {
-            //rtrProps = this.loadPropsFromFile(rtrTxt, true);
             sysProps = this.loadPropsFromFile(settingsTxt, false);
+            psProps =  this.loadPropsFromFile(psTxt, true);
             
             assignSystemVariables();
             createDevices(rtrTxt);
+            createDBConnection(this.getSysProperty("sql_server_ip_addr"), this.getSysProperty("sql_server_username"), this.getSysProperty("sql_server_password"));
         } catch (IOException ioe) { System.out.println(_class+"/"+ioe); }
-
+            
+    }
+    
+    private void createDBConnection(String ip, String u, String p) {
+        dbcon = new DBConnection(ip, u, p, psProps);
     }
     
     private HashMap createDevices(String deviceList) {
@@ -91,6 +98,6 @@ public class V6MACassoc {
     public Object saveSysProperty(String key, String value) { return sysProps.setProperty(key, value); }
 
     public static void main(String[] args) {
-        V6MACassoc v6MA = new V6MACassoc("routers.txt", "settings.properties");
+        V6MACassoc v6MA = new V6MACassoc("routers.txt", "settings.properties", "v6macassoc/preparedstatements.properties");
     }
 }
