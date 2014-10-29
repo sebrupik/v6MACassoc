@@ -35,11 +35,12 @@ public final class V6MACassoc {
             
             dpEngine = new DevicePollerEngine(devices);
             
-            if(daemon) 
+            if(daemon) {
                 this.runAsDaemon(30);
-            else
+            } else {
                 dpEngine.execute();
-            
+                dpEngine.shutdown();
+            }
         } catch (IOException ioe) { System.out.println(_class+"/"+ioe); }
             
     }
