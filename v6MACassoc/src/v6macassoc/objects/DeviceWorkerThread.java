@@ -23,6 +23,7 @@ import java.lang.StringBuilder;
 
 
 public class DeviceWorkerThread implements Runnable {
+    private final String _class;
     private JSch jsch;
     private Session session;
     private Expect expect;
@@ -37,6 +38,8 @@ public class DeviceWorkerThread implements Runnable {
         this.host = host;
         this.port = port;
         this.command = command;
+        
+        this._class = this.getClass().getName();
         
         jsch = new JSch();
         result = new StringBuffer();
@@ -62,7 +65,7 @@ public class DeviceWorkerThread implements Runnable {
     
    private ChannelShell connectSSH() throws JSchException {
         if(session.isConnected()) {
-           System.out.println("session already connnected....better diconnect it.");
+           System.out.println(_class+"/connectSSH - session already connnected....better diconnect it.");
            session.disconnect();
         } 
         session = jsch.getSession(username, host, port);
