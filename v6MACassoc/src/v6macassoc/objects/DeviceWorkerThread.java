@@ -55,9 +55,7 @@ public class DeviceWorkerThread implements Runnable {
            
            
         } catch(IOException ioe) {
-            
         } catch(JSchException jse) {
-            
         }
 
         System.out.println(Thread.currentThread().getName()+" End.");
