@@ -35,11 +35,15 @@ public class DevicePollerEngine {
     
     public void execute() {
         System.out.println(_class+"/execute - entered");
-        Iterator it = devices.entrySet().iterator();
+        Iterator it = devices.keySet().iterator();
         while (it.hasNext()) {
-           Device dev = (Device)it.next();
+           Device dev = (Device)devices.get(it.next());
            executorPool.execute(new DeviceWorkerThread(dev.getUsername(), dev.getPassword(), dev.getEnable(), dev.getIPAddr(), dev.getPort(), dev.getCommand() )); 
         }
         System.out.println(_class+"/execute - exited");
+    }
+    
+    public void shutdown() {
+        executorPool.shutdown();
     }
 }
