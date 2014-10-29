@@ -62,9 +62,11 @@ public class DeviceWorkerThread implements Runnable {
     }
     
    private ChannelShell connectSSH() throws JSchException {
-        if(session.isConnected()) {
-           System.out.println(_class+"/connectSSH - session already connnected....better diconnect it.");
-           session.disconnect();
+        if(session !=null) {
+            if(session.isConnected()) {
+                System.out.println(_class+"/connectSSH - session already connnected....better disconnect it.");
+                session.disconnect();
+            }
         } 
         session = jsch.getSession(username, host, port);
         session.setPassword(password);
