@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 
 public class DevicePollerEngine {
+    private final String _class;
     private HashMap devices;
     RejectedExecutionHandlerImpl rejectionHandler;
     ThreadFactory threadFactory;
@@ -23,6 +24,9 @@ public class DevicePollerEngine {
     
     public DevicePollerEngine(HashMap devices) {
         this.devices = devices;
+        this._class = this.getClass().getName();
+        
+        System.out.println(_class+"/DevicePollerEngine - "+devices.size()+" devices to be polled");
         
         rejectionHandler = new RejectedExecutionHandlerImpl();
         threadFactory = Executors.defaultThreadFactory();
@@ -30,10 +34,12 @@ public class DevicePollerEngine {
     }
     
     public void execute() {
+        System.out.println(_class+"/execute - entered");
         Iterator it = devices.entrySet().iterator();
         while (it.hasNext()) {
            Device dev = (Device)it.next();
            executorPool.execute(new DeviceWorkerThread(dev.getUsername(), dev.getPassword(), dev.getEnable(), dev.getIPAddr(), dev.getPort(), dev.getCommand() )); 
         }
+        System.out.println(_class+"/execute - exited");
     }
 }
