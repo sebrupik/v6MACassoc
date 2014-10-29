@@ -1,57 +1,130 @@
 package v6macassoc.objects;
 
-import expect4j.Expect4j;
+import net.sf.expectit.Expect;
+import net.sf.expectit.ExpectBuilder;
+import static net.sf.expectit.filter.Filters.removeColors;
+import static net.sf.expectit.filter.Filters.removeNonPrintable;
+import static net.sf.expectit.matcher.Matchers.contains;
+import static net.sf.expectit.matcher.Matchers.regexp;
 
+//import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
-       
+
+import java.util.Properties;
 import java.io.IOException;
 import java.lang.InterruptedException;
 import java.util.Hashtable;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.lang.StringBuilder;
+
 
 public class DeviceWorkerThread implements Runnable {
-    private Expect4j expect;
-    private String username, password, host, command;
+    private JSch jsch;
+    private Session session;
+    private Expect expect;
+    private String username, password, enable, host, command;
     private int port;
-    public DeviceWorkerThread(String username, String password, String host, int port, String command) {
+    StringBuffer result;
+    
+    public DeviceWorkerThread(String username, String password, String enable, String host, int port, String command) {
         this.username = username;
         this.password = password;
+        this.enable = enable;
         this.host = host;
         this.port = port;
         this.command = command;
         
-       
+        jsch = new JSch();
+        result = new StringBuffer();
+        
     }
     @Override public void run() {
         System.out.println(Thread.currentThread().getName()+" Start. Command = "+command);
-        processCommand();
+        try {
+           ChannelShell c = connectSSH();
+           processCommand(c, buildExpect(c));
+           
+           //now dump the command result to a DB...
+           
+           
+        } catch(IOException ioe) {
+            
+        } catch(JSchException jse) {
+            
+        }
 
         System.out.println(Thread.currentThread().getName()+" End.");
     }
     
-   private void connectSSH() throws Exception, IOException, JSchException {
-        JSch jsch = new JSch();
-        Session session = jsch.getSession(username, host, port);
+   private ChannelShell connectSSH() throws JSchException {
+        if(session.isConnected()) {
+           System.out.println("session already connnected....better diconnect it.");
+           session.disconnect();
+        } 
+        session = jsch.getSession(username, host, port);
         session.setPassword(password);
 
-        Hashtable<String,String> config = new Hashtable<String,String>();
+        Properties config = new Properties();
         config.put("StrictHostKeyChecking", "no");
         session.setConfig(config);
         session.connect(60000);
-        ChannelShell channel = (ChannelShell) session.openChannel("shell");
-        expect = new Expect4j(channel.getInputStream(), channel.getOutputStream());
-        channel.connect();
+        
+        return (ChannelShell)session.openChannel("shell");
+    }
+   
+    private Expect buildExpect(ChannelShell channel) throws IOException {
+        Expect expect = new ExpectBuilder()
+                            .withOutput(channel.getOutputStream())
+                            .withInputs(channel.getInputStream(), channel.getExtInputStream())
+                            .withEchoInput(System.out)
+                            .withEchoOutput(System.err)
+                            .withInputFilters(removeColors(), removeNonPrintable())
+                            .withExceptionOnFailure()
+                            .build();
+        
+        return expect;
     }
 
-    private void processCommand() {
+    private void processCommand(ChannelShell channel, Expect expect) throws JSchException, IOException {
         try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            channel.connect();
+            expect.expect(contains(">"));
+            expect.sendLine("en");
+            expect.expect(contains("Password:"));
+            expect.sendLine(enable);
+            expect.expect(contains("#"));
+            // should we retireve the current terminal length before setting it?
+            expect.sendLine("terminal length 0");
+            expect.expect(contains("#"));
+            expect.sendLine(command);
+            
+            //read the channel inputStream to see all the good stuff.
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(channel.getInputStream()));
+            readAll(bufferedReader, result);
+            
+            
+            expect.expect(contains("#"));
+            expect.sendLine("terminal length 24");
+            expect.expect(contains("#"));
+            expect.sendLine("exit");
+        } finally {
+            channel.disconnect();
+            session.disconnect();
+            expect.close();
         }
     }
+    
+    private void readAll(BufferedReader buffR, StringBuffer stringB) throws IOException {
+        String line;
+        while( (line = buffR.readLine()) != null) {
+           stringB.append(line);
+        }
+    }
+    
     @Override public String toString(){
         return this.command;
     }
