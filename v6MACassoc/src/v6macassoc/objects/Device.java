@@ -12,22 +12,24 @@ public class Device {
     private final int port;
     
     Date lastrun;
+    String colon=":";
     
     public Device(String[] items) {
         ip_addr = items[0];
-        port = Integer.parseInt(items[1]);
-        device_type = items[2];
-        username = items[3];
-        password = items[4];
+        port = Integer.parseInt(items[0].substring(items[0].lastIndexOf(":")+1, items[0].length()));
+        //port = Integer.parseInt(items[1]);
+        device_type = items[1];
+        username = items[2];
+        password = items[3];
         
         if(device_type.equals(_ROUTER)) {
-            enable = items[5];
+            enable = items[4];
             command = _IOS_COMMAND;
         }
         
         this._class = this.getClass().getName();
         
-        System.out.println(_class+"/device object created - "+ip_addr);
+        System.out.println(_class+"/device object created - "+ip_addr+" : "+port);
     }
     
     public String getIPAddr() { return ip_addr; }
