@@ -2,6 +2,7 @@ package v6macassoc;
 
 import v6macassoc.objects.DBConnection;
 import v6macassoc.objects.Device;
+import v6macassoc.objects.DeviceRouter;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -68,7 +69,15 @@ public final class V6MACassoc {
             String[] items;
             while ((line = br.readLine()) != null) {
                 items = line.split(";");
-                devices.put(items[0], new Device(items));
+                if(items[0].equals(v6macassoc.objects.DeviceRouter._ROUTER)) {
+                    if((items.length-1)== v6macassoc.objects.DeviceRouter._ARGUMENTS)
+                        devices.put(items[1], new DeviceRouter(items));
+                    else 
+                        System.out.println(_class+"/createDevices - you have the incorrect number of arguments ("+items.length+") to create a DeviceRouter ("+v6macassoc.objects.DeviceRouter._ARGUMENTS+")");
+                }
+                //else if(items[0].equals("RADIUS"))
+                    
+                      
             }
             br.close();
         } catch(java.io.FileNotFoundException fnfe) { System.out.println(_class+"/createDevices - "+fnfe);

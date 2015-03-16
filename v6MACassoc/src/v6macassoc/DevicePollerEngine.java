@@ -2,6 +2,7 @@ package v6macassoc;
 
 import v6macassoc.interfaces.RejectedExecutionHandlerImpl;
 import v6macassoc.objects.Device;
+import v6macassoc.objects.DeviceRouter;
 import v6macassoc.objects.DeviceWorkerThread;
 
 
@@ -37,8 +38,12 @@ public class DevicePollerEngine {
         System.out.println(_class+"/execute - entered");
         Iterator it = devices.keySet().iterator();
         while (it.hasNext()) {
-           Device dev = (Device)devices.get(it.next());
-           executorPool.execute(new DeviceWorkerThread(dev.getUsername(), dev.getPassword(), dev.getEnable(), dev.getIPAddr(), dev.getPort(), dev.getCommand() )); 
+           if ( devices.get(it.next()) instanceof v6macassoc.objects.DeviceRouter) {
+               DeviceRouter dr = (DeviceRouter)devices.get(it.next());
+               executorPool.execute(new DeviceWorkerThread(dr.getUsername(), dr.getPassword(), dr.getEnable(), dr.getIPAddr(), dr.getPort(), dr.getCommand() )); 
+           }
+           //Device dev = (Device)devices.get(it.next()); 
+           //executorPool.execute(new DeviceWorkerThread(dev.getUsername(), dev.getPassword(), dev.getEnable(), dev.getIPAddr(), dev.getPort(), dev.getCommand() )); 
         }
         System.out.println(_class+"/execute - exited");
     }

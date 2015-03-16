@@ -1,3 +1,3 @@
-10.10.30.1:22;ROUTER;admin;password;enablePassword
-10.10.30.2:22;aggregator;admin;password
-10.10.30.128:3306;radius;admin;password 
+ROUTER;10.10.30.1:22;admin;password;enablePassword
+ROUTER;10.10.30.2:22;admin;password;enablePassword
+RADIUS;10.10.30.128:3306;admin;password 
