@@ -1,5 +1,7 @@
 package v6macassoc.objects;
 
+import v6macassoc.objects.Device;
+
 import net.sf.expectit.Expect;
 import net.sf.expectit.ExpectBuilder;
 import static net.sf.expectit.filter.Filters.removeColors;
@@ -29,24 +31,36 @@ public class DeviceWorkerThread implements Runnable {
     private Expect expect;
     private String username, password, enable, host, command;
     private int port;
+    
+    private Device dev;
+    private final String _type;
+    
     StringBuffer result;
     
-    public DeviceWorkerThread(String username, String password, String enable, String host, int port, String command) {
-        this.username = username;
+    public DeviceWorkerThread(Device dev) {
+    //public DeviceWorkerThread(String username, String password, String enable, String host, int port, String command) {
+        /*this.username = username;
         this.password = password;
         this.enable = enable;
         this.host = host;
         this.port = port;
-        this.command = command;
+        this.command = command;*/
+        this.dev = dev;
+        
         
         this._class = this.getClass().getName();
+        
+        if ( dev instanceof v6macassoc.objects.DeviceRouter) 
+            _type = v6macassoc.objects.DeviceRouter._ROUTER;
+        else
+            _type = "UNKNOWN";
         
         jsch = new JSch();
         result = new StringBuffer();
         
     }
     @Override public void run() {
-        System.out.println(Thread.currentThread().getName()+" Start. Command = "+command);
+        System.out.println(Thread.currentThread().getName()+" Start. running a thread for a "+_type+", "+dev.getIPAddr());
         try {
            ChannelShell c = connectSSH();
            processCommand(c, buildExpect(c));

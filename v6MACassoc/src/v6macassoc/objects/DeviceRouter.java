@@ -52,6 +52,7 @@ public class DeviceRouter extends Device implements AuthenticatedDevice {
                 }
             }
         }
+        return "";
     }
     
     public String getUsername() { return username; }
