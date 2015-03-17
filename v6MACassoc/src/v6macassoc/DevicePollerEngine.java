@@ -3,6 +3,8 @@ package v6macassoc;
 import v6macassoc.interfaces.RejectedExecutionHandlerImpl;
 import v6macassoc.objects.Device;
 import v6macassoc.objects.DeviceRouter;
+import v6macassoc.objects.DeviceRouterIOS;
+import v6macassoc.objects.DeviceRouterLinux;
 import v6macassoc.objects.DeviceWorkerThread;
 
 
@@ -37,7 +39,7 @@ public class DevicePollerEngine {
     public void execute() {
         System.out.println(_class+"/execute - entered");
         Device d;
-        DeviceRouter dr;
+        DeviceRouter dr; 
         Iterator it = devices.keySet().iterator();
         while (it.hasNext()) {
            d = (Device)devices.get(it.next());

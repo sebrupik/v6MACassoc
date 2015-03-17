@@ -6,17 +6,17 @@ import java.io.BufferedReader;
 import java.io.StringReader;
 import java.util.ArrayList;
 
-public class DeviceRouter extends Device implements AuthenticatedDevice {
-    public static int _ARGUMENTS = 4;
-    public static String _ROUTER = "ROUTER";
-    public static String _IOS_COMMAND = "sh ipv6 neigh";
-    public static String _LINUX_COMMAND = "ip -6 neigh";
+public abstract class DeviceRouter extends Device implements AuthenticatedDevice {
+    //public static int _ARGUMENTS = 4;
+    //public static String _ROUTER = "ROUTER";
+    //public static String _IOS_COMMAND = "sh ipv6 neigh";
+    //public static String _LINUX_COMMAND = "ip -6 neigh";
     
     private final String _class;
     private String username, password, enable;
     
     public DeviceRouter(String[] items) {
-        super(new String[]{items[1],_ROUTER});
+        super(new String[]{items[0],items[1]});
         username = items[2];
         password = items[3];
         enable = items[4];
@@ -24,8 +24,8 @@ public class DeviceRouter extends Device implements AuthenticatedDevice {
         this._class = this.getClass().getName();
     }
     
-    
-    public String processOutput(String cmd, String output) throws java.io.IOException {
+    abstract String processOutput(String cmd, String output) throws java.io.IOException;
+    /*public String processOutput(String cmd, String output) throws java.io.IOException {
         BufferedReader buff = new BufferedReader(new StringReader(output));
         String line;
         String[] split;
@@ -53,7 +53,7 @@ public class DeviceRouter extends Device implements AuthenticatedDevice {
             }
         }
         return "";
-    }
+    }*/
     
     public String getUsername() { return username; }
     public String getPassword() { return password; }

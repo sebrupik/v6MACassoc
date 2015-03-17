@@ -12,9 +12,10 @@ public abstract class Device {
     String colon=":";
     
     public Device(String[] items) {
-        this.ip_addr = items[0];
-        this.port = Integer.parseInt(items[0].substring(items[0].lastIndexOf(":")+1, items[0].length()));
-        this.device_type = items[1];
+        this.device_type = items[0];
+        this.ip_addr = items[1];
+        this.port = Integer.parseInt(items[1].substring(items[1].lastIndexOf(":")+1, items[1].length()));
+        
         
         this._class = this.getClass().getName();
         
