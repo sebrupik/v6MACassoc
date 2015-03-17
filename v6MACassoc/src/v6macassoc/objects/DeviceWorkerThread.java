@@ -57,6 +57,7 @@ public class DeviceWorkerThread implements Runnable {
         
         jsch = new JSch();
         result = new StringBuffer();
+        System.out.println(_class+"/DeviceWorkerThread - created "+dev.getIPAddr());
         
     }
     @Override public void run() {

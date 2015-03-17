@@ -36,15 +36,17 @@ public class DevicePollerEngine {
     
     public void execute() {
         System.out.println(_class+"/execute - entered");
+        Device d;
         DeviceRouter dr;
         Iterator it = devices.keySet().iterator();
         while (it.hasNext()) {
-           if ( devices.get(it.next()) instanceof v6macassoc.objects.DeviceRouter) {
-               dr = (DeviceRouter)devices.get(it.next());
+           d = (Device)devices.get(it.next());
+           if ( d instanceof v6macassoc.objects.DeviceRouter) {
+               dr = (DeviceRouter)d;
                //executorPool.execute(new DeviceWorkerThread(dr.getUsername(), dr.getPassword(), dr.getEnable(), dr.getIPAddr(), dr.getPort(), dr.getCommand() )); 
                executorPool.execute(new DeviceWorkerThread(dr));
            } else {
-               System.out.println("not sure what device type this was!!");
+               System.out.println(_class+"/execute - not sure what device type this was!!");
            }
               
            //Device dev = (Device)devices.get(it.next()); 
