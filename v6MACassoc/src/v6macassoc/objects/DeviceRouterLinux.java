@@ -5,14 +5,25 @@
  */
 package v6macassoc.objects;
 
+import v6macassoc.objects.ipv6neigh;
+
+import com.jcraft.jsch.ChannelShell;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
+import net.sf.expectit.Expect;
+import static net.sf.expectit.matcher.Matchers.contains;
+
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
 
+
 public class DeviceRouterLinux extends DeviceRouter {
     public static int _ARGUMENTS = 4;
-    public static String _ROUTER = "ROUTER_LINUX";
-    public static String _LINUX_COMMAND = "ip -6 neigh";
+    public static String _TYPE = "ROUTER_LINUX";
+    public static String[] _LINUX_COMMAND = new String[]{"ip -6 neigh"};
     
     private final String _class;
     
@@ -22,12 +33,37 @@ public class DeviceRouterLinux extends DeviceRouter {
         this._class = this.getClass().getName();
     }
     
-    @Override public String processOutput(String cmd, String output) throws java.io.IOException {
-        BufferedReader buff = new BufferedReader(new StringReader(output));
+    @Override public void processCommand(ChannelShell channel, Expect expect, Session session) throws JSchException, IOException {
+        try {
+            channel.connect();
+            expect.expect(contains("password:"));
+            expect.sendLine(getPassword());
+            expect.expect(contains("$"));
+            
+            
+            
+            //read the channel inputStream to see all the good stuff.
+            //BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(channel.getInputStream()));
+            //readAll(bufferedReader, result);
+            for (int i=0;i<_LINUX_COMMAND.length; i++) {
+                expect.sendLine(_LINUX_COMMAND[i]);
+                String x = processInput(_LINUX_COMMAND[i], channel);
+            }
+            expect.expect(contains("$"));
+            expect.sendLine("exit");
+        } finally {
+            channel.disconnect();
+            session.disconnect();
+            expect.close();
+        }
+    } 
+    
+    @Override public String processInput(String cmd, ChannelShell channel) throws java.io.IOException {
+        BufferedReader buff = new BufferedReader(new InputStreamReader(channel.getInputStream()));
         String line;
         String[] split;
        
-        ArrayList al = new ArrayList();
+        ArrayList<ipv6neigh> al = new ArrayList<>();
         if(cmd.equals(_LINUX_COMMAND)) {
             while((line = buff.readLine()) != null) {
                 split = line.split("\\s+");

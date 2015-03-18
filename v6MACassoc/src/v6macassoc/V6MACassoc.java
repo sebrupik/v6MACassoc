@@ -2,7 +2,8 @@ package v6macassoc;
 
 import v6macassoc.objects.DBConnection;
 import v6macassoc.objects.Device;
-import v6macassoc.objects.DeviceRouter;
+import v6macassoc.objects.DeviceRouterIOS;
+import v6macassoc.objects.DeviceRouterLinux;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -69,12 +70,17 @@ public final class V6MACassoc {
             String[] items;
             while ((line = br.readLine()) != null) {
                 items = line.split(";");
-                if(items[0].equals(v6macassoc.objects.DeviceRouter._ROUTER)) {
-                    if((items.length-1)== v6macassoc.objects.DeviceRouter._ARGUMENTS)
-                        devices.put(items[1], new DeviceRouter(items));
+                if(items[0].equals(v6macassoc.objects.DeviceRouterIOS._TYPE)) {
+                    if((items.length-1)== v6macassoc.objects.DeviceRouterIOS._ARGUMENTS)
+                        devices.put(items[1], new DeviceRouterIOS(items));
                     else 
-                        System.out.println(_class+"/createDevices - you have the incorrect number of arguments ("+items.length+") to create a DeviceRouter ("+v6macassoc.objects.DeviceRouter._ARGUMENTS+")");
-                }
+                        System.out.println(_class+"/createDevices - you have the incorrect number of arguments ("+items.length+") to create a DeviceRouter ("+v6macassoc.objects.DeviceRouterIOS._ARGUMENTS+")");
+                } else if(items[0].equals(v6macassoc.objects.DeviceRouterLinux._TYPE)) {
+                    if((items.length-1)== v6macassoc.objects.DeviceRouterLinux._ARGUMENTS)
+                        devices.put(items[1], new DeviceRouterLinux(items));
+                    else 
+                        System.out.println(_class+"/createDevices - you have the incorrect number of arguments ("+items.length+") to create a DeviceRouter ("+v6macassoc.objects.DeviceRouterLinux._ARGUMENTS+")");
+                } 
                 //else if(items[0].equals("RADIUS"))
                     
                       

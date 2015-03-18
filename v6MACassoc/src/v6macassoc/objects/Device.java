@@ -1,6 +1,12 @@
 package v6macassoc.objects;
 
+import com.jcraft.jsch.ChannelShell;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
+import java.io.IOException;
 import java.util.Date;
+import net.sf.expectit.Expect;
+
 
 public abstract class Device {
     private final String _class;
@@ -21,6 +27,9 @@ public abstract class Device {
         
         System.out.println(_class+"/device object created - "+ip_addr+" : "+port);
     }
+    
+    abstract void processCommand(ChannelShell channel, Expect expect, Session session) throws JSchException, IOException;
+    abstract String processInput(String cmd, ChannelShell channel) throws java.io.IOException;
     
     public String getIPAddr() { return ip_addr; }
     public int getPort() { return port; }

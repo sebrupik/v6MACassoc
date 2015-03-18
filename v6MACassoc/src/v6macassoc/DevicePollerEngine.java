@@ -45,14 +45,10 @@ public class DevicePollerEngine {
            d = (Device)devices.get(it.next());
            if ( d instanceof v6macassoc.objects.DeviceRouter) {
                dr = (DeviceRouter)d;
-               //executorPool.execute(new DeviceWorkerThread(dr.getUsername(), dr.getPassword(), dr.getEnable(), dr.getIPAddr(), dr.getPort(), dr.getCommand() )); 
                executorPool.execute(new DeviceWorkerThread(dr));
            } else {
                System.out.println(_class+"/execute - not sure what device type this was!!");
            }
-              
-           //Device dev = (Device)devices.get(it.next()); 
-           //executorPool.execute(new DeviceWorkerThread(dev.getUsername(), dev.getPassword(), dev.getEnable(), dev.getIPAddr(), dev.getPort(), dev.getCommand() )); 
         }
         System.out.println(_class+"/execute - exited");
     }
