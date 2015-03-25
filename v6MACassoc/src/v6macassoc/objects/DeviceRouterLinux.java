@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 
 public class DeviceRouterLinux extends DeviceRouter {
-    public static int _ARGUMENTS = 4;
+    public static int _ARGUMENTS = 3;
     public static String _TYPE = "ROUTER_LINUX";
     public static String[] _LINUX_COMMAND = new String[]{"ip -6 neigh"};
     
@@ -27,10 +27,11 @@ public class DeviceRouterLinux extends DeviceRouter {
     }
     
     @Override public void processCommand(ChannelShell channel, Expect expect, Session session) throws JSchException, IOException {
+        System.out.println(_class+"/processCommand - entering");
         try {
             channel.connect();
-            expect.expect(contains("password:"));
-            expect.sendLine(getPassword());
+            //expect.expect(contains("password:"));
+            //expect.sendLine(getPassword());
             expect.expect(contains("$"));
             
             
@@ -54,12 +55,21 @@ public class DeviceRouterLinux extends DeviceRouter {
     @Override public String processInput(String cmd, ChannelShell channel) throws java.io.IOException {
         BufferedReader buff = new BufferedReader(new InputStreamReader(channel.getInputStream()));
         String line;
+        ipv6neigh ipv6n;
        
         ArrayList<ipv6neigh> al = new ArrayList<>();
         
         while((line = buff.readLine()) != null) {
-            al.add(ipv6neighFactory.createObject(cmd, line, super.getIPAddr()));
+            System.out.println("entering the while loop");
+            if(line.endsWith("$"))
+                break;
+            
+            ipv6n = ipv6neighFactory.createObject(cmd, line, super.getIPAddr());
+            if(ipv6n !=null)
+                al.add(ipv6n);
+            System.out.println("exiting the while loop");
         }
+        System.out.println(_class+"/processInput - finished reading the buffer");
         
         return "";
     }

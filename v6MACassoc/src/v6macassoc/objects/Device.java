@@ -19,7 +19,7 @@ public abstract class Device {
     
     public Device(String[] items) {
         this.device_type = items[0];
-        this.ip_addr = items[1];
+        this.ip_addr = items[1].substring(0, items[1].lastIndexOf(":"));
         this.port = Integer.parseInt(items[1].substring(items[1].lastIndexOf(":")+1, items[1].length()));
         
         

@@ -2,11 +2,14 @@ package v6macassoc.objects;
 
 class ipv6neighFactory {
     public static ipv6neigh createObject(String command, String input, String source) {
-        switch (command.toLowerCase()) {
-            case "sh ipv6 neigh":
-                return createObjectIOS(command, input, source);
-            case "ip -6 neigh":
-                return createObjectLinux(command, input, source);
+        System.out.println("------------ "+input+" :: "+input.trim().length());
+        if(input.trim().length()>0) {
+            switch (command.toLowerCase()) {
+                case "sh ipv6 neigh":
+                    return createObjectIOS(command, input, source);
+                case "ip -6 neigh":
+                    return createObjectLinux(command, input, source);
+            }
         }
         
         return null;
@@ -22,6 +25,9 @@ class ipv6neighFactory {
     }
     
     private static ipv6neigh createObjectLinux(String command, String input, String source) {
+        if(input.equals(command))
+            return null;
+        
         String[] split = input.split("\\s+");
         if(split[3].equals("INCOMPLETE")) {
             return new ipv6neigh(ipv6FullLength(split[0]),

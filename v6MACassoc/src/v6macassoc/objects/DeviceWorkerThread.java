@@ -25,12 +25,12 @@ public class DeviceWorkerThread implements Runnable {
     private String username, password, enable, host, command;
     private int port;
     
-    private Device dev;
+    private DeviceRouter dev;
     private final String _type;
     
     StringBuffer result;
     
-    public DeviceWorkerThread(Device dev) {
+    public DeviceWorkerThread(DeviceRouter dev) {
         this.dev = dev;
     
         this._class = this.getClass().getName();
@@ -52,7 +52,9 @@ public class DeviceWorkerThread implements Runnable {
            
            
         } catch(IOException ioe) {
+            System.out.println(_class+"/run - "+ioe);
         } catch(JSchException jse) {
+            System.out.println(_class+"/run - "+jse);
         }
 
         System.out.println(Thread.currentThread().getName()+" End.");
@@ -65,8 +67,9 @@ public class DeviceWorkerThread implements Runnable {
                 session.disconnect();
             }
         } 
-        session = jsch.getSession(username, host, port);
-        session.setPassword(password);
+        session = jsch.getSession(dev.getUsername(), dev.getIPAddr(), dev.getPort());
+        session.setPassword(dev.getPassword());
+        
 
         Properties config = new Properties();
         config.put("StrictHostKeyChecking", "no");
