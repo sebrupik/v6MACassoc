@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package v6macassoc.objects;
 
 import com.jcraft.jsch.ChannelShell;
@@ -14,7 +9,6 @@ import static net.sf.expectit.matcher.Matchers.contains;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.util.ArrayList;
 
 
@@ -48,13 +42,13 @@ public class DeviceRouterIOS extends DeviceRouter {
             expect.sendLine("terminal length 0");
             expect.expect(contains("#"));
             
-            for (int i=0;i<_IOS_COMMAND.length; i++) {
-                expect.sendLine(_IOS_COMMAND[i]);
+            for(String command : _IOS_COMMAND) {
+                expect.sendLine(command);
 
                 //read the channel inputStream to see all the good stuff.
                 //BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(channel.getInputStream()));
                 //readAll(bufferedReader, result);
-                String x = processInput(_IOS_COMMAND[i], channel);
+                String x = processInput(command, channel);
             
             }
             expect.expect(contains("#"));
@@ -71,21 +65,13 @@ public class DeviceRouterIOS extends DeviceRouter {
     @Override public String processInput(String cmd, ChannelShell channel) throws java.io.IOException {
         BufferedReader buff = new BufferedReader(new InputStreamReader(channel.getInputStream()));
         String line;
-        String[] split;
        
         ArrayList<ipv6neigh> al = new ArrayList<>();
-        if(cmd.equals(_IOS_COMMAND)) {
-            while((line = buff.readLine()) != null) {
-                if(!line.startsWith("IPv6 Address")) {
-                    al.add(new ipv6neigh(line.substring(0,42), 
-                                         Integer.parseInt(line.substring(42,45)),
-                                         line.substring(46,60),
-                                         line.substring(62,67), 
-                                         line.substring(68, line.length()),
-                                         super.getIPAddr()));
-                }
-            }
-        } 
+        
+        while((line = buff.readLine()) != null) {
+            al.add(ipv6neighFactory.createObject(cmd, line, super.getIPAddr()));
+        }
+        
         return "";
     } 
     

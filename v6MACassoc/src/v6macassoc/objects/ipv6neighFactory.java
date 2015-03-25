@@ -5,29 +5,43 @@ class ipv6neighFactory {
         switch (command.toLowerCase()) {
             case "sh ipv6 neigh":
                 return createObjectIOS(command, input, source);
+            case "ip -6 neigh":
+                return createObjectLinux(command, input, source);
         }
         
         return null;
     }
     
     private static ipv6neigh createObjectIOS(String command, String input, String source) {
-        String ipv6_address = input.substring(0,42);
-        int age = Integer.parseInt(input.substring(42,45));
-        String mac_address = input.substring(46,60);
-        String state = input.substring(62,67);
-        String interf = input.substring(68, input.length());
-        
-        
-        
-        return 
+        return new ipv6neigh(ipv6FullLength(input.substring(0,42)),
+                             Integer.parseInt(input.substring(42,45)),
+                             macCompress(input.substring(46,60)),
+                             stateNormalise(input.substring(62,67)),
+                             input.substring(68, input.length()),
+                             source);
     }
     
     private static ipv6neigh createObjectLinux(String command, String input, String source) {
-        
+        String[] split = input.split("\\s+");
+        if(split[3].equals("INCOMPLETE")) {
+            return new ipv6neigh(ipv6FullLength(split[0]),
+                                 0,
+                                 "N/A",
+                                 stateNormalise(split[3]),
+                                 split[2],
+                                 source);
+        } else {
+            return new ipv6neigh(ipv6FullLength(split[0]),
+                                 0,
+                                 macCompress(split[4]),
+                                 stateNormalise(split[5]),
+                                 split[2],
+                                 source);
+        }
     }
     
     private static String ipv6FullLength(String oriIPv6) {
-        StringBuilder sb = new StringBuilder(oriIPv6);
+        StringBuilder sb = new StringBuilder(oriIPv6.trim());
         int index = oriIPv6.indexOf("::");
         if(index!=-1) {
             int octets = (oriIPv6.split(":").length)-1;
@@ -51,6 +65,7 @@ class ipv6neighFactory {
 	    else
                output = output+":"+elements[i];
         }
+        return output;
     }
     
     private static String macCompress(String oriMAC) {
@@ -67,9 +82,19 @@ class ipv6neighFactory {
         }
 
 	if (output.length()!=12) {
-	    System.out.println("something hhas gone wrong with the parse on "+oriMAC+" ("+output+"), returning null");
+	    System.out.println("something has gone wrong with the parse on "+oriMAC+" ("+output+"), returning null");
             output=null;
 	}
         return output;
+    }
+    
+    private static String stateNormalise(String state) {
+        switch(state) {
+            case "INCOMP":
+                return "INCOMPLETE";
+            case "REACH":
+                return "REACHABLE";
+        }
+        return state;
     }
 }
