@@ -39,18 +39,49 @@ public class DeviceRouterLinux extends DeviceRouter {
             //read the channel inputStream to see all the good stuff.
             //BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(channel.getInputStream()));
             //readAll(bufferedReader, result);
+            BufferedReader buff = new BufferedReader(new InputStreamReader(channel.getInputStream()));
+            System.out.println(_class+"/processCommand - entering command for-loop");
             for (String command : _LINUX_COMMAND) {
+                
+                expect.sendLine();
+                expect.expect(contains("$"));
+                
                 expect.sendLine(command);
-                String x = processInput(command, channel);
+                processInput(command, buff);
+                //String x = processInput(command, channel);
             }
-            expect.expect(contains("$"));
+            System.out.println(_class+"/processCommand - exited command for-loop");
+            
+            //expect.expect(contains("$"));
             expect.sendLine("exit");
         } finally {
+            expect.close();
             channel.disconnect();
             session.disconnect();
-            expect.close();
         }
     } 
+    
+    public String processInput(String cmd, BufferedReader buff) throws java.io.IOException {
+        String line;
+        ipv6neigh ipv6n;
+       
+        ArrayList<ipv6neigh> al = new ArrayList<>();
+        
+        while(true) {
+            line = buff.readLine();
+            System.out.println("entering the while loop");
+            if(line.endsWith("$") || line.length()!=0)
+                break;
+            
+            ipv6n = ipv6neighFactory.createObject(cmd, line, super.getIPAddr());
+            if(ipv6n !=null)
+                al.add(ipv6n);
+            System.out.println("exiting the while loop");
+        }
+        System.out.println(_class+"/processInput - finished reading the buffer");
+        
+        return "";
+    }
     
     @Override public String processInput(String cmd, ChannelShell channel) throws java.io.IOException {
         BufferedReader buff = new BufferedReader(new InputStreamReader(channel.getInputStream()));
@@ -59,9 +90,10 @@ public class DeviceRouterLinux extends DeviceRouter {
        
         ArrayList<ipv6neigh> al = new ArrayList<>();
         
-        while((line = buff.readLine()) != null) {
+        while(true) {
+            line = buff.readLine();
             System.out.println("entering the while loop");
-            if(line.endsWith("$"))
+            if(line.endsWith("$") || line.length()!=0)
                 break;
             
             ipv6n = ipv6neighFactory.createObject(cmd, line, super.getIPAddr());
