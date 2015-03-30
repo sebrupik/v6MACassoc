@@ -9,8 +9,7 @@ import net.sf.expectit.Expect;
 
 
 public abstract class Device {
-    private final String _class;
-    private String ip_addr, device_type, username, password, enable, command;
+    private final String _class, ip_addr, device_type;
     private final int port;
     
     

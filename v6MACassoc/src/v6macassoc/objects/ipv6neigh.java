@@ -1,6 +1,7 @@
 package v6macassoc.objects;
 
 public class ipv6neigh {
+    private final String _class;
     private String ipv6address, macaddress, state, interf, datasource;
     private int age;
     
@@ -11,6 +12,10 @@ public class ipv6neigh {
         this.state = state;
         this.interf = interf;
         this.datasource = datasource;
+        
+        this._class = this.getClass().getName();
+        
+        System.out.println(_class+" - created "+ipv6address);
     }
     
     public String getIpv6address() { return this.ipv6address; }

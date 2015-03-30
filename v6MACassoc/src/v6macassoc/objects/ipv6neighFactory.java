@@ -4,11 +4,16 @@ class ipv6neighFactory {
     public static ipv6neigh createObject(String command, String input, String source) {
         System.out.println("------------ "+input+" :: "+input.trim().length());
         if(input.trim().length()>0) {
-            switch (command.toLowerCase()) {
-                case "sh ipv6 neigh":
-                    return createObjectIOS(command, input, source);
-                case "ip -6 neigh":
-                    return createObjectLinux(command, input, source);
+            try {
+                switch (command.toLowerCase()) {
+                    case "sh ipv6 neigh":
+                        return createObjectIOS(command, input, source);
+                    case "ip -6 neigh":
+                        return createObjectLinux(command, input, source);
+                }
+            } catch (java.lang.ArrayIndexOutOfBoundsException aiobe) {
+                System.out.println("ipv6neighFactory/createObject - "+aiobe.toString());
+                System.out.println("ipv6neighFactory/createObject - "+input);
             }
         }
         
@@ -24,7 +29,7 @@ class ipv6neighFactory {
                              source);
     }
     
-    private static ipv6neigh createObjectLinux(String command, String input, String source) {
+    private static ipv6neigh createObjectLinux(String command, String input, String source) throws java.lang.ArrayIndexOutOfBoundsException {
         if(input.equals(command))
             return null;
         
@@ -56,7 +61,6 @@ class ipv6neighFactory {
                 insert+="0000";
                 if(i<=6)
                     insert+=":";
-		System.out.println("insert == "+insert);
             }
             sb.insert(index+1, insert);
         }
