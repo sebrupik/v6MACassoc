@@ -102,6 +102,8 @@ public class DeviceWorkerThread implements Runnable {
     private String getDeviceType(Device dev) {
         if ( dev instanceof v6macassoc.objects.DeviceRouterIOS) 
             return v6macassoc.objects.DeviceRouterIOS._TYPE;
+        else if ( dev instanceof v6macassoc.objects.DeviceRouterIOSASA) 
+            return v6macassoc.objects.DeviceRouterIOSASA._TYPE;
         else if ( dev instanceof v6macassoc.objects.DeviceRouterLinux) 
             return v6macassoc.objects.DeviceRouterLinux._TYPE;
         else

@@ -3,6 +3,7 @@ package v6macassoc;
 import v6macassoc.objects.DBConnection;
 import v6macassoc.objects.Device;
 import v6macassoc.objects.DeviceRouterIOS;
+import v6macassoc.objects.DeviceRouterIOSASA;
 import v6macassoc.objects.DeviceRouterLinux;
 
 import java.io.BufferedReader;
@@ -67,20 +68,26 @@ public final class V6MACassoc {
             String line;
             String[] items;
             while ((line = br.readLine()) != null) {
-                items = line.split(";");
-                if(items[0].equals(v6macassoc.objects.DeviceRouterIOS._TYPE)) {
-                    if((items.length-1)== v6macassoc.objects.DeviceRouterIOS._ARGUMENTS)
-                        devices.put(items[1], new DeviceRouterIOS(items));
-                    else 
-                        System.out.println(_class+"/createDevices - you have the incorrect number of arguments ("+items.length+") to create a DeviceRouter ("+v6macassoc.objects.DeviceRouterIOS._ARGUMENTS+")");
-                } else if(items[0].equals(v6macassoc.objects.DeviceRouterLinux._TYPE)) {
-                    if((items.length-1)== v6macassoc.objects.DeviceRouterLinux._ARGUMENTS)
-                        devices.put(items[1], new DeviceRouterLinux(items));
-                    else 
-                        System.out.println(_class+"/createDevices - you have the incorrect number of arguments ("+items.length+") to create a DeviceRouter ("+v6macassoc.objects.DeviceRouterLinux._ARGUMENTS+")");
-                } 
-                //else if(items[0].equals("RADIUS"))
-                    
+                if (!line.startsWith("#")) {
+                    items = line.split(";");
+                    if(items[0].equals(v6macassoc.objects.DeviceRouterIOS._TYPE)) {
+                        if((items.length-1)== v6macassoc.objects.DeviceRouterIOS._ARGUMENTS)
+                            devices.put(items[1], new DeviceRouterIOS(items));
+                        else 
+                            System.out.println(_class+"/createDevices - you have the incorrect number of arguments ("+items.length+") to create a DeviceRouterIOS ("+v6macassoc.objects.DeviceRouterIOS._ARGUMENTS+")");
+                    } else if(items[0].equals(v6macassoc.objects.DeviceRouterIOSASA._TYPE)) {
+                        if((items.length-1)== v6macassoc.objects.DeviceRouterIOSASA._ARGUMENTS)
+                            devices.put(items[1], new DeviceRouterIOSASA(items));
+                        else 
+                            System.out.println(_class+"/createDevices - you have the incorrect number of arguments ("+items.length+") to create a DeviceRouterIOSASA ("+v6macassoc.objects.DeviceRouterIOSASA._ARGUMENTS+")");
+                    } else if(items[0].equals(v6macassoc.objects.DeviceRouterLinux._TYPE)) {
+                        if((items.length-1)== v6macassoc.objects.DeviceRouterLinux._ARGUMENTS)
+                            devices.put(items[1], new DeviceRouterLinux(items));
+                        else 
+                            System.out.println(_class+"/createDevices - you have the incorrect number of arguments ("+items.length+") to create a DeviceRouterLinux ("+v6macassoc.objects.DeviceRouterLinux._ARGUMENTS+")");
+                    } 
+                    //else if(items[0].equals("RADIUS"))
+                }   
                       
             }
             br.close();

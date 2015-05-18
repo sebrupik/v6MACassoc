@@ -31,8 +31,8 @@ public class DeviceRouterIOS extends DeviceRouter {
     @Override public void processCommand(ChannelShell channel, Expect expect, Session session) throws JSchException, IOException {
         try {
             channel.connect();
-            expect.expect(contains("password:"));
-            expect.sendLine(getPassword());
+            //expect.expect(contains("password:"));
+            //expect.sendLine(getPassword());
             expect.expect(contains(">"));
             expect.sendLine("en");
             expect.expect(contains("Password:"));

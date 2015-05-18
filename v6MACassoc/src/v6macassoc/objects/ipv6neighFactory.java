@@ -4,6 +4,10 @@ class ipv6neighFactory {
     public static ipv6neigh createObject(String command, String input, String source) {
         System.out.println("------------ "+input+" :: "+input.trim().length());
         if(input.trim().length()>0) {
+            if(input.equals(command))
+                return null;
+            if(input.startsWith("IPv6"))
+                return null;
             try {
                 switch (command.toLowerCase()) {
                     case "sh ipv6 neigh":
@@ -11,6 +15,7 @@ class ipv6neighFactory {
                     case "ip -6 neigh":
                         return createObjectLinux(command, input, source);
                 }
+            System.out.println("ipv6neighFactory/createObject - finished parsing input");    
             } catch (java.lang.ArrayIndexOutOfBoundsException aiobe) {
                 System.out.println("ipv6neighFactory/createObject - "+aiobe.toString());
                 System.out.println("ipv6neighFactory/createObject - "+input);
@@ -21,8 +26,9 @@ class ipv6neighFactory {
     }
     
     private static ipv6neigh createObjectIOS(String command, String input, String source) {
+        System.out.println("ipv6neighFactory/createObjectIOS - about to parse input");
         return new ipv6neigh(ipv6FullLength(input.substring(0,42)),
-                             Integer.parseInt(input.substring(42,45)),
+                             Integer.parseInt(input.substring(42,45).trim()),
                              macCompress(input.substring(46,60)),
                              stateNormalise(input.substring(62,67)),
                              input.substring(68, input.length()),
@@ -30,8 +36,8 @@ class ipv6neighFactory {
     }
     
     private static ipv6neigh createObjectLinux(String command, String input, String source) throws java.lang.ArrayIndexOutOfBoundsException {
-        if(input.equals(command))
-            return null;
+        //if(input.equals(command))
+        //    return null;
         
         String[] split = input.split("\\s+");
         if(split[3].equals("INCOMPLETE")) {
