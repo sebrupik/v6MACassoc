@@ -15,10 +15,12 @@ import com.jcraft.jsch.Session;
 import java.util.Properties;
 import java.io.IOException;
 import java.io.BufferedReader;
+import v6macassoc.V6MACassoc;
 
 
 public class DeviceWorkerThread implements Runnable {
     private final String _class;
+    V6MACassoc owner;
     private JSch jsch;
     private Session session;
     private Expect expect;
@@ -30,9 +32,9 @@ public class DeviceWorkerThread implements Runnable {
     
     StringBuffer result;
     
-    public DeviceWorkerThread(DeviceRouter dev) {
+    public DeviceWorkerThread(V6MACassoc owner, DeviceRouter dev) {
         this.dev = dev;
-    
+        this.owner = owner;
         this._class = this.getClass().getName();
         
         _type = this.getDeviceType(dev);
@@ -49,7 +51,11 @@ public class DeviceWorkerThread implements Runnable {
            dev.processCommand(c, buildExpect(c), session);
            
            //now dump the command result to a DB...
-           
+           if(_type.equals(v6macassoc.objects.DeviceRouterIOS._TYPE) |
+              _type.equals(v6macassoc.objects.DeviceRouterIOSASA._TYPE) |
+              _type.equals(v6macassoc.objects.DeviceRouterLinux._TYPE) ) {
+              owner.getDatabaseEngine().insertArrayList("ipv6neigh",((DeviceRouter)dev).getNeighborList() );
+           }
            
         } catch(IOException ioe) {
             System.out.println(_class+"/run - "+ioe);

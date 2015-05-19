@@ -1,8 +1,11 @@
 package v6macassoc.objects;
     
+import java.util.ArrayList;
 import v6macassoc.interfaces.AuthenticatedDevice;
 
 public abstract class DeviceRouter extends Device implements AuthenticatedDevice {
+    
+    ArrayList<ipv6neigh> neighAl;
     
     private final String _class;
     private String username, password;
@@ -13,6 +16,10 @@ public abstract class DeviceRouter extends Device implements AuthenticatedDevice
         password = items[3];
         
         this._class = this.getClass().getName();
+    }
+    
+    public ArrayList getNeighborList() {
+        return this.neighAl;
     }
     
     public String getUsername() { return username; }

@@ -20,6 +20,7 @@ public final class V6MACassoc {
     private Properties psProps, sysProps;
     private HashMap<String, Device> devices;
     private DevicePollerEngine dpEngine;
+    private DatabaseEngine dEngine;
     
     DBConnection dbcon;
     
@@ -34,13 +35,17 @@ public final class V6MACassoc {
             createDevices(rtrTxt);
             createDBConnection(this.getSysProperty("sql_server_ip_addr"), this.getSysProperty("sql_server_username"), this.getSysProperty("sql_server_password"));
             
-            dpEngine = new DevicePollerEngine(devices);
+            dpEngine = new DevicePollerEngine(this, devices);
+            dEngine = new DatabaseEngine(this, dbcon);
             
             if(daemon) {
                 this.runAsDaemon(30);
             } else {
+                dEngine.execute();
                 dpEngine.execute();
+                
                 dpEngine.shutdown();
+                dEngine.shutdown();
             }
         } catch (IOException ioe) { System.out.println(_class+"/"+ioe); }
             
@@ -48,6 +53,7 @@ public final class V6MACassoc {
     
     private void runAsDaemon(int epoch) {
         while(true) {
+            dEngine.execute();
             dpEngine.execute();
             try {
                 Thread.sleep(epoch);
@@ -148,5 +154,9 @@ public final class V6MACassoc {
         }
         
         V6MACassoc v6MA = new V6MACassoc("routers.txt", "settings.properties", "v6macassoc/preparedstatements.properties", d);
+    }
+    
+    public DatabaseEngine getDatabaseEngine() {
+        return dEngine;
     }
 }

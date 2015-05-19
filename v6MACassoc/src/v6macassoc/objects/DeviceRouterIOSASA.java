@@ -21,8 +21,6 @@ public class DeviceRouterIOSASA extends DeviceRouter {
     
     private final String _class;
     
-    private ArrayList<ipv6neigh> neighAl;
-    
     public DeviceRouterIOSASA(String[] items) {
         super(items);
         
@@ -60,6 +58,8 @@ public class DeviceRouterIOSASA extends DeviceRouter {
             expect.close();
         }
     }
+    
+    
     
     public ArrayList processInputNew(String[] cmd, BufferedReader buff) throws java.io.IOException {
         boolean[] mark = new boolean[]{false,false};
