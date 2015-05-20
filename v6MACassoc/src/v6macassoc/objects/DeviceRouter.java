@@ -19,6 +19,7 @@ public abstract class DeviceRouter extends Device implements AuthenticatedDevice
     }
     
     public ArrayList getNeighborList() {
+        System.out.println(_class+"/getNeighbourList - size: "+neighAl.size());
         return this.neighAl;
     }
     

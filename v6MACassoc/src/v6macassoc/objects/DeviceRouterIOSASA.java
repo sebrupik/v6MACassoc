@@ -49,7 +49,7 @@ public class DeviceRouterIOSASA extends DeviceRouter {
             //expect.expect(contains("#"));
             expect.sendLine("exit");
             BufferedReader buff = new BufferedReader(new InputStreamReader(channel.getInputStream()));
-            neighAl = processInputNew(_IOS_COMMAND, buff);
+            neighAl = processInput(_IOS_COMMAND, buff);
             
             
         } finally {
@@ -59,9 +59,7 @@ public class DeviceRouterIOSASA extends DeviceRouter {
         }
     }
     
-    
-    
-    public ArrayList processInputNew(String[] cmd, BufferedReader buff) throws java.io.IOException {
+    @Override public ArrayList processInput(String[] cmd, BufferedReader buff) throws java.io.IOException {
         boolean[] mark = new boolean[]{false,false};
         String line;
         ipv6neigh ipv6n;
@@ -96,6 +94,7 @@ public class DeviceRouterIOSASA extends DeviceRouter {
               
             }
         }
+        System.out.println(_class+"/processInput - return this many ipv6neighs : "+al.size());
         return al;
     }
     
@@ -109,19 +108,6 @@ public class DeviceRouterIOSASA extends DeviceRouter {
         
         return false;
     }
-    
-    @Override public String processInput(String cmd, ChannelShell channel) throws java.io.IOException {
-        BufferedReader buff = new BufferedReader(new InputStreamReader(channel.getInputStream()));
-        String line;
-       
-        ArrayList<ipv6neigh> al = new ArrayList<>();
-        
-        while((line = buff.readLine()) != null) {
-            al.add(ipv6neighFactory.createObject(cmd, line, super.getIPAddr()));
-        }
-        
-        return "";
-    } 
     
     public String getEnable() { return enable; }
 }

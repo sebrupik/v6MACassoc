@@ -2,7 +2,7 @@ package v6macassoc.objects;
 
 class ipv6neighFactory {
     public static ipv6neigh createObject(String command, String input, String source) {
-        System.out.println("------------ "+input+" :: "+input.trim().length());
+        //System.out.println("------------ "+input+" :: "+input.trim().length());
         if(input.trim().length()>0) {
             if(input.equals(command))
                 return null;

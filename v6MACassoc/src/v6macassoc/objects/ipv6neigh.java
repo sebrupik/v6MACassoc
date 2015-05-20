@@ -15,14 +15,14 @@ public class ipv6neigh {
         
         this._class = this.getClass().getName();
         
-        System.out.println(_class+" - created "+ipv6address);
+        //System.out.println(_class+" - created "+ipv6address);
     }
     
     public String getIpv6address() { return this.ipv6address; }
     public int getAge() { return this.age; }
-    public String macaddress() { return this.macaddress; }
-    public String state() { return this.state; }
-    public String interf() { return this.interf; }
-    public String datasource() { return this.datasource; }
+    public String getMacaddress() { return this.macaddress; }
+    public String getState() { return this.state; }
+    public String getInterface() { return this.interf; }
+    public String getDatasource() { return this.datasource; }
   
 }

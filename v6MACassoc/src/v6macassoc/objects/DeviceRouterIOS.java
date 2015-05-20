@@ -48,7 +48,7 @@ public class DeviceRouterIOS extends DeviceRouter {
                 //read the channel inputStream to see all the good stuff.
                 //BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(channel.getInputStream()));
                 //readAll(bufferedReader, result);
-                String x = processInput(command, channel);
+                //String x = processInput(command, channel);
             
             }
             expect.expect(contains("#"));
@@ -62,17 +62,53 @@ public class DeviceRouterIOS extends DeviceRouter {
         }
     }
     
-    @Override public String processInput(String cmd, ChannelShell channel) throws java.io.IOException {
-        BufferedReader buff = new BufferedReader(new InputStreamReader(channel.getInputStream()));
+    @Override public ArrayList processInput(String[] cmd, BufferedReader buff) throws java.io.IOException {
+        boolean[] mark = new boolean[]{false,false};
         String line;
-       
+        ipv6neigh ipv6n;
         ArrayList<ipv6neigh> al = new ArrayList<>();
         
-        while((line = buff.readLine()) != null) {
-            al.add(ipv6neighFactory.createObject(cmd, line, super.getIPAddr()));
+        for(int i=0; i<cmd.length; i++) {
+            while(true) {
+                line = buff.readLine();
+                if(line==null | line.trim().length()==0) {
+                    System.out.println("big break!!! "+line);
+                    break;
+                }
+                
+                if(line.contains(cmd[i]))
+                    mark[0] = true;
+                
+                if (i+1 != cmd.length) {
+                    if(line.contains(cmd[i+1]))
+                        mark[1] = true;
+                }
+                
+                //System.out.println(mark[0]+" : "+mark[1]+" :: "+line);
+                
+                if(mark[0]==true & mark[1]==false) {
+                    if(!this.thingsThatArentNeighs(line, cmd[i])) {
+                        ipv6n = ipv6neighFactory.createObject(cmd[i], line, super.getIPAddr());
+                        if(ipv6n !=null) {
+                            al.add(ipv6n);
+                        }
+                    }
+                }
+              
+            }
         }
+        return al;
+    }
+    
+    private boolean thingsThatArentNeighs(String input, String command) {
+        if(input.trim().equals(command))
+            return true;
+        else if(input.trim().startsWith("IPv6"))
+            return true;
+        else if(input.trim().startsWith("exit"))
+            return true;
         
-        return "";
+        return false;
     } 
     
     public String getEnable() { return enable; }

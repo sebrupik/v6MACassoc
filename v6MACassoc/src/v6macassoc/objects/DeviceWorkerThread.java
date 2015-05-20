@@ -48,12 +48,15 @@ public class DeviceWorkerThread implements Runnable {
         System.out.println(Thread.currentThread().getName()+" Start. running a thread for a "+_type+", "+dev.getIPAddr());
         try {
            ChannelShell c = connectSSH(); 
+           System.out.println("about to run processCommand");
            dev.processCommand(c, buildExpect(c), session);
+           System.out.println("finsihed processCommand");
            
            //now dump the command result to a DB...
            if(_type.equals(v6macassoc.objects.DeviceRouterIOS._TYPE) |
               _type.equals(v6macassoc.objects.DeviceRouterIOSASA._TYPE) |
               _type.equals(v6macassoc.objects.DeviceRouterLinux._TYPE) ) {
+               System.out.println("Lets insert some ipv6neighs");
               owner.getDatabaseEngine().insertArrayList("ipv6neigh",((DeviceRouter)dev).getNeighborList() );
            }
            

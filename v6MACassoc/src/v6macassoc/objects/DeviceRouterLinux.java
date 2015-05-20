@@ -48,7 +48,7 @@ public class DeviceRouterLinux extends DeviceRouter {
             expect.sendLine("exit");
             
             BufferedReader buff = new BufferedReader(new InputStreamReader(channel.getInputStream()));
-            processInputNew(_LINUX_COMMAND, buff);
+            neighAl = processInput(_LINUX_COMMAND, buff);
             
         } finally {
             expect.close();
@@ -57,7 +57,7 @@ public class DeviceRouterLinux extends DeviceRouter {
         }
     } 
     
-    public String processInputNew(String[] cmd, BufferedReader buff) throws java.io.IOException {
+    @Override public ArrayList processInput(String[] cmd, BufferedReader buff) throws java.io.IOException {
         boolean[] mark = new boolean[]{false,false};
         String line;
         ipv6neigh ipv6n;
@@ -89,51 +89,7 @@ public class DeviceRouterLinux extends DeviceRouter {
               
             }
         }
-        return "";
-    }
-    
-    public String processInput(String cmd, BufferedReader buff) throws java.io.IOException {
-        String line;
-        ipv6neigh ipv6n;
-       
-        ArrayList<ipv6neigh> al = new ArrayList<>();
-        
-        while(true) {
-            line = buff.readLine();
-            System.out.println("entering the while loop : "+line);
-            if(line.endsWith("$") || line.length()==0)
-                break;
-            
-            ipv6n = ipv6neighFactory.createObject(cmd, line, super.getIPAddr());
-            if(ipv6n !=null)
-                al.add(ipv6n);
-            System.out.println("exiting the while loop");
-        }
-        System.out.println(_class+"/processInput - finished reading the buffer");
-        
-        return "";
-    }
-    
-    @Override public String processInput(String cmd, ChannelShell channel) throws java.io.IOException {
-        BufferedReader buff = new BufferedReader(new InputStreamReader(channel.getInputStream()));
-        String line;
-        ipv6neigh ipv6n;
-       
-        ArrayList<ipv6neigh> al = new ArrayList<>();
-        
-        while(true) {
-            line = buff.readLine();
-            System.out.println("entering the while loop");
-            if(line.endsWith("$") || line.length()!=0)
-                break;
-            
-            ipv6n = ipv6neighFactory.createObject(cmd, line, super.getIPAddr());
-            if(ipv6n !=null)
-                al.add(ipv6n);
-            System.out.println("exiting the while loop");
-        }
-        System.out.println(_class+"/processInput - finished reading the buffer");
-        
-        return "";
+        System.out.println(_class+"/processInput - return this many ipv6neighs : "+al.size());
+        return al;
     }
 }
