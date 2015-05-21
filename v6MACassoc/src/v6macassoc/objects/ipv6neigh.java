@@ -17,6 +17,11 @@ public class ipv6neigh {
         this._CLASS = this.getClass().getName();
     }
     
+    /**
+     * 
+     * @return      _IPV6ADDRESS
+     * @see         String
+     */
     public String getIpv6address() { return this._IPV6ADDRESS; }
     public int getAge() { return this._age; }
     public String getMacaddress() { return this._MACADDRESS; }

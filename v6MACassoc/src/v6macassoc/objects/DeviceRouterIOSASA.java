@@ -100,6 +100,15 @@ public class DeviceRouterIOSASA extends DeviceRouter {
         return al;
     }
     
+    /**
+     * 
+     * @param input   a single line from the command output
+     * @param command the command used to generate the contents of the input 
+     *                string
+     * @return        did the input String contain anything that would indicate 
+     *                a line from an IPv6 neighbour table was not being parsed
+     * @see boolean
+     */
     private boolean thingsThatArentNeighs(String input, String command) {
         if(input.trim().equals(command))
             return true;

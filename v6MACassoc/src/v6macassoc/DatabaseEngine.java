@@ -24,6 +24,11 @@ public class DatabaseEngine extends ThreadEngine {
         executorPool.execute(dbct);
     }
     
+    /**
+     * 
+     * @param type the content type of the Arraylist parameter, eg ipv6neigh
+     * @param al Arraylist containing the objects to be parsed and inserted into the database
+     */
     public void insertArrayList(String type, ArrayList al) {
         if(dbct!=null) 
             dbct.insertArrayList(type, al);
