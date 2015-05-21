@@ -7,7 +7,7 @@ public abstract class DeviceRouter extends Device implements AuthenticatedDevice
     
     ArrayList<ipv6neigh> neighAl;
     
-    private final String _class;
+    private final String _CLASS;
     private String username, password;
     
     public DeviceRouter(String[] items) {
@@ -15,14 +15,14 @@ public abstract class DeviceRouter extends Device implements AuthenticatedDevice
         username = items[2];
         password = items[3];
         
-        this._class = this.getClass().getName();
+        this._CLASS = this.getClass().getName();
     }
     
     public ArrayList getNeighborList() {
-        System.out.println(_class+"/getNeighbourList - size: "+neighAl.size());
+        System.out.println(_CLASS+"/getNeighbourList - size: "+neighAl.size());
         return this.neighAl;
     }
     
-    public String getUsername() { return username; }
-    public String getPassword() { return password; }
+    @Override public String getUsername() { return username; }
+    @Override public String getPassword() { return password; }
 }

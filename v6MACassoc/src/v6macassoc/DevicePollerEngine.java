@@ -8,34 +8,34 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class DevicePollerEngine extends ThreadEngine {
-    private final String _class;
-    private V6MACassoc owner;
-    private HashMap devices;
+    private final String _CLASS;
+    private final V6MACassoc _OWNER;
+    private final HashMap _DEVICES;
     
     
     public DevicePollerEngine(V6MACassoc owner, HashMap devices) {
         super(2,4,10);
-        this.owner = owner;
-        this.devices = devices;
-        this._class = this.getClass().getName();
+        this._OWNER = owner;
+        this._DEVICES = devices;
+        this._CLASS = this.getClass().getName();
         
-        System.out.println(_class+"/DevicePollerEngine - "+devices.size()+" devices to be polled");
+        System.out.println(_CLASS+"/DevicePollerEngine - "+devices.size()+" devices to be polled");
     }
     
     @Override public void execute() {
-        System.out.println(_class+"/execute - entered");
+        System.out.println(_CLASS+"/execute - entered");
         Device d;
         DeviceRouter dr; 
-        Iterator it = devices.keySet().iterator();
+        Iterator it = _DEVICES.keySet().iterator();
         while (it.hasNext()) {
-           d = (Device)devices.get(it.next());
+           d = (Device)_DEVICES.get(it.next());
            if ( d instanceof v6macassoc.objects.DeviceRouter) {
                dr = (DeviceRouter)d;
-               executorPool.execute(new DeviceWorkerThread(owner, dr));
+               executorPool.execute(new DeviceWorkerThread(_OWNER, dr));
            } else {
-               System.out.println(_class+"/execute - not sure what device type this was!!");
+               System.out.println(_CLASS+"/execute - not sure what device type this was!!");
            }
         }
-        System.out.println(_class+"/execute - exited");
+        System.out.println(_CLASS+"/execute - exited");
     }
 }

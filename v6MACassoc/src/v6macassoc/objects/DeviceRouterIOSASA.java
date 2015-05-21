@@ -10,22 +10,23 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class DeviceRouterIOSASA extends DeviceRouter {
-    public static int _ARGUMENTS = 4;
-    public static String _TYPE = "ROUTER_IOS_ASA";
-    public static String[] _IOS_COMMAND = new String[]{"sh ipv6 neigh"};
+    public static int arguments = 4;
+    public static String type = "ROUTER_IOS_ASA";
+    public static String[] ios_command = new String[]{"sh ipv6 neigh"};
     
-    private final String enable;
+    private final String _ENABLE;
     
-    private final String _class;
+    private final String _CLASS;
     
     public DeviceRouterIOSASA(String[] items) {
         super(items);
         
-        this.enable = items[4];
-        this._class = this.getClass().getName();
+        this._ENABLE = items[4];
+        this._CLASS = this.getClass().getName();
     }
     
     @Override public void processCommand(ChannelShell channel, Expect expect, Session session) throws JSchException, IOException {
@@ -34,13 +35,13 @@ public class DeviceRouterIOSASA extends DeviceRouter {
             expect.expect(contains(">"));
             expect.sendLine("en");
             expect.expect(contains("Password:"));
-            expect.sendLine(enable);
+            expect.sendLine(_ENABLE);
             expect.expect(contains("#"));
             // should we retireve the current terminal length before setting it?
             expect.sendLine("terminal pager 0");
             //expect.expect(contains("#"));
             
-            for(String command : _IOS_COMMAND) {
+            for(String command : ios_command) {
                 expect.expect(contains("#"));
                 expect.sendLine(command);
             }
@@ -49,7 +50,7 @@ public class DeviceRouterIOSASA extends DeviceRouter {
             //expect.expect(contains("#"));
             expect.sendLine("exit");
             BufferedReader buff = new BufferedReader(new InputStreamReader(channel.getInputStream()));
-            neighAl = processInput(_IOS_COMMAND, buff);
+            neighAl = processInput(ios_command, buff);
             
             
         } finally {
@@ -64,6 +65,7 @@ public class DeviceRouterIOSASA extends DeviceRouter {
         String line;
         ipv6neigh ipv6n;
         ArrayList<ipv6neigh> al = new ArrayList<>();
+        long timestamp = new Date().getTime();
         
         for(int i=0; i<cmd.length; i++) {
             while(true) {
@@ -85,7 +87,7 @@ public class DeviceRouterIOSASA extends DeviceRouter {
                 
                 if(mark[0]==true & mark[1]==false) {
                     if(!this.thingsThatArentNeighs(line, cmd[i])) {
-                        ipv6n = ipv6neighFactory.createObject(cmd[i], line, super.getIPAddr());
+                        ipv6n = ipv6neighFactory.createObject(cmd[i], line, super.getIPAddr(), timestamp);
                         if(ipv6n !=null) {
                             al.add(ipv6n);
                         }
@@ -94,7 +96,7 @@ public class DeviceRouterIOSASA extends DeviceRouter {
               
             }
         }
-        System.out.println(_class+"/processInput - return this many ipv6neighs : "+al.size());
+        System.out.println(_CLASS+"/processInput - return this many ipv6neighs : "+al.size());
         return al;
     }
     
@@ -109,5 +111,5 @@ public class DeviceRouterIOSASA extends DeviceRouter {
         return false;
     }
     
-    public String getEnable() { return enable; }
+    public String getEnable() { return _ENABLE; }
 }

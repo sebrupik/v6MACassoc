@@ -6,7 +6,7 @@ import v6macassoc.objects.DBConThread;
 import java.util.ArrayList;
 
 public class DatabaseEngine extends ThreadEngine {
-    private final String _class;
+    private final String _CLASS;
     V6MACassoc owner;
     DBConnection dbcon;
     DBConThread dbct;
@@ -15,7 +15,7 @@ public class DatabaseEngine extends ThreadEngine {
         super(1,1,10);
         this.owner = owner;
         this.dbcon = dbcon;
-        this._class = this.getClass().getName();
+        this._CLASS = this.getClass().getName();
         
         this.dbct = new DBConThread(dbcon); 
     }

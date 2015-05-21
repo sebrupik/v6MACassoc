@@ -11,30 +11,31 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class DeviceRouterLinux extends DeviceRouter {
-    public static int _ARGUMENTS = 3;
-    public static String _TYPE = "ROUTER_LINUX";
-    public static String[] _LINUX_COMMAND = new String[]{"ip -6 neigh"};
+    public static int arguments = 3;
+    public static String type = "ROUTER_LINUX";
+    public static String[] linux_command = new String[]{"ip -6 neigh"};
     
-    private final String _class;
+    private final String _CLASS;
     
     public DeviceRouterLinux(String[] items) {
         super(items);
         
-        this._class = this.getClass().getName();
+        this._CLASS = this.getClass().getName();
     }
     
     @Override public void processCommand(ChannelShell channel, Expect expect, Session session) throws JSchException, IOException {
-        System.out.println(_class+"/processCommand - entering");
+        System.out.println(_CLASS+"/processCommand - entering");
         try {
             channel.connect();
             //expect.expect(contains("$"));
             
             //BufferedReader buff = new BufferedReader(new InputStreamReader(channel.getInputStream()));
-            System.out.println(_class+"/processCommand - entering command for-loop");
-            for (String command : _LINUX_COMMAND) {
+            System.out.println(_CLASS+"/processCommand - entering command for-loop");
+            for (String command : linux_command) {
                 //expect.sendLine();
                 expect.expect(contains("$"));
                 
@@ -42,13 +43,13 @@ public class DeviceRouterLinux extends DeviceRouter {
                 //processInput(command, buff);
                 //String x = processInput(command, channel);
             }
-            System.out.println(_class+"/processCommand - exited command for-loop");
+            System.out.println(_CLASS+"/processCommand - exited command for-loop");
             
             //expect.expect(contains("$"));
             expect.sendLine("exit");
             
             BufferedReader buff = new BufferedReader(new InputStreamReader(channel.getInputStream()));
-            neighAl = processInput(_LINUX_COMMAND, buff);
+            neighAl = processInput(linux_command, buff);
             
         } finally {
             expect.close();
@@ -62,6 +63,7 @@ public class DeviceRouterLinux extends DeviceRouter {
         String line;
         ipv6neigh ipv6n;
         ArrayList<ipv6neigh> al = new ArrayList<>();
+        long timestamp = new Date().getTime();
         
         for(int i=0; i<cmd.length; i++) {
             while(true) {
@@ -82,14 +84,14 @@ public class DeviceRouterLinux extends DeviceRouter {
                 //System.out.println(mark[0]+" : "+mark[1]+" :: "+line);
                 
                 if(mark[0]==true & mark[1]==false) {
-                    ipv6n = ipv6neighFactory.createObject(cmd[i], line, super.getIPAddr());
+                    ipv6n = ipv6neighFactory.createObject(cmd[i], line, super.getIPAddr(), timestamp);
                     if(ipv6n !=null)
                         al.add(ipv6n);
                 }
               
             }
         }
-        System.out.println(_class+"/processInput - return this many ipv6neighs : "+al.size());
+        System.out.println(_CLASS+"/processInput - return this many ipv6neighs : "+al.size());
         return al;
     }
 }

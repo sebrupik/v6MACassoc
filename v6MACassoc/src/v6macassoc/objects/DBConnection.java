@@ -113,7 +113,7 @@ public class DBConnection {
                 //    updates += ps[i].executeUpdate();
                 //}
                 for(PreparedStatement element : ps) {
-                    System.out.println(element);
+                    //System.out.println(element);
                     updates += element.executeUpdate();
                 }
                 dbcon.commit();

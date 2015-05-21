@@ -1,7 +1,7 @@
 package v6macassoc.objects;
 
 class ipv6neighFactory {
-    public static ipv6neigh createObject(String command, String input, String source) {
+    public static ipv6neigh createObject(String command, String input, String source, long timestamp) {
         //System.out.println("------------ "+input+" :: "+input.trim().length());
         if(input.trim().length()>0) {
             if(input.equals(command))
@@ -11,9 +11,9 @@ class ipv6neighFactory {
             try {
                 switch (command.toLowerCase()) {
                     case "sh ipv6 neigh":
-                        return createObjectIOS(command, input, source);
+                        return createObjectIOS(command, input, source, timestamp);
                     case "ip -6 neigh":
-                        return createObjectLinux(command, input, source);
+                        return createObjectLinux(command, input, source, timestamp);
                 }
             System.out.println("ipv6neighFactory/createObject - finished parsing input");    
             } catch (java.lang.ArrayIndexOutOfBoundsException aiobe) {
@@ -25,36 +25,54 @@ class ipv6neighFactory {
         return null;
     }
     
-    private static ipv6neigh createObjectIOS(String command, String input, String source) {
+    private static ipv6neigh createObjectIOS(String command, String input, String source, long timestamp) {
         System.out.println("ipv6neighFactory/createObjectIOS - about to parse input");
         return new ipv6neigh(ipv6FullLength(input.substring(0,42)),
                              Integer.parseInt(input.substring(42,45).trim()),
                              macCompress(input.substring(46,60)),
                              stateNormalise(input.substring(62,67)),
                              input.substring(68, input.length()),
-                             source);
+                             source, timestamp);
     }
     
-    private static ipv6neigh createObjectLinux(String command, String input, String source) throws java.lang.ArrayIndexOutOfBoundsException {
-        //if(input.equals(command))
-        //    return null;
+    private static ipv6neigh createObjectLinux(String command, String input, String source, long timestamp) throws java.lang.ArrayIndexOutOfBoundsException {
+        boolean route = false;
         
         String[] split = input.split("\\s+");
-        if(split[3].equals("INCOMPLETE")) {
-            return new ipv6neigh(ipv6FullLength(split[0]),
-                                 0,
-                                 "N/A",
-                                 stateNormalise(split[3]),
-                                 split[2],
-                                 source);
-        } else {
-            return new ipv6neigh(ipv6FullLength(split[0]),
-                                 0,
-                                 macCompress(split[4]),
-                                 stateNormalise(split[5]),
-                                 split[2],
-                                 source);
+        
+        /* 
+        The linux 'ip -6 neigh' occasionally throws up lines containing items 'route' or 'router'.
+        'Router' onces tend to be the linux boxes interfaces, but sometimes there are other MAC addresses listed, these maybe rogue routets?
+        'route' not sure what these are?!
+        */
+        if(command.equals("ip -6 neigh")) {
+            for(String element : split) {
+            //for(int i=0;i<split.length;i++) {
+                if(element.startsWith("route")) {
+                    route = true;
+                    System.out.println("found a strange one! : "+input);
+                    break;
+                }
+            }
         }
+        if(!route) {
+            if(split[3].equals("INCOMPLETE") | split[3].equals("FAILED")) {
+                return new ipv6neigh(ipv6FullLength(split[0]),
+                                     0,
+                                     "N/A",
+                                     stateNormalise(split[3]),
+                                     split[2],
+                                     source, timestamp);
+            } else {
+                return new ipv6neigh(ipv6FullLength(split[0]),
+                                     0,
+                                     macCompress(split[4]),
+                                     stateNormalise(split[5]),
+                                     split[2],
+                                     source, timestamp);
+            }
+        }
+        return null;
     }
     
     private static String ipv6FullLength(String oriIPv6) {
@@ -93,8 +111,9 @@ class ipv6neighFactory {
              elements = oriMAC.split(":");
         }
         if(elements!=null) {
-            for (int i=0;i<elements.length;i++)
-                output+=elements[i];
+            //for (int i=0;i<elements.length;i++)
+            for(String element : elements) 
+                output+=element;
         }
 
 	if (output.length()!=12) {

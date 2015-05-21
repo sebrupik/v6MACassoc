@@ -19,73 +19,70 @@ import v6macassoc.V6MACassoc;
 
 
 public class DeviceWorkerThread implements Runnable {
-    private final String _class;
+    private final String _CLASS;
     V6MACassoc owner;
-    private JSch jsch;
-    private Session session;
-    private Expect expect;
-    private String username, password, enable, host, command;
-    private int port;
+    private JSch _jsch;
+    private Session _session;
+    private Expect _expect;
+    private String _username, _password, _enable, _host, _command;
+    private int _port;
     
-    private DeviceRouter dev;
-    private final String _type;
+    private DeviceRouter _dev;
+    private final String _TYPE;
     
     StringBuffer result;
     
     public DeviceWorkerThread(V6MACassoc owner, DeviceRouter dev) {
-        this.dev = dev;
+        this._dev = dev;
         this.owner = owner;
-        this._class = this.getClass().getName();
+        this._CLASS = this.getClass().getName();
         
-        _type = this.getDeviceType(dev);
+        _TYPE = this.getDeviceType(dev);
         
-        jsch = new JSch();
+        _jsch = new JSch();
         result = new StringBuffer();
-        System.out.println(_class+"/DeviceWorkerThread - created "+dev.getIPAddr());
+        System.out.println(_CLASS+"/DeviceWorkerThread - created "+dev.getIPAddr());
         
     }
     @Override public void run() {
-        System.out.println(Thread.currentThread().getName()+" Start. running a thread for a "+_type+", "+dev.getIPAddr());
+        System.out.println(Thread.currentThread().getName()+" Start. running a thread for a "+_TYPE+", "+_dev.getIPAddr());
         try {
            ChannelShell c = connectSSH(); 
            System.out.println("about to run processCommand");
-           dev.processCommand(c, buildExpect(c), session);
+           _dev.processCommand(c, buildExpect(c), _session);
            System.out.println("finsihed processCommand");
            
            //now dump the command result to a DB...
-           if(_type.equals(v6macassoc.objects.DeviceRouterIOS._TYPE) |
-              _type.equals(v6macassoc.objects.DeviceRouterIOSASA._TYPE) |
-              _type.equals(v6macassoc.objects.DeviceRouterLinux._TYPE) ) {
+           if(_TYPE.equals(v6macassoc.objects.DeviceRouterIOS._TYPE) |
+              _TYPE.equals(v6macassoc.objects.DeviceRouterIOSASA.type) |
+              _TYPE.equals(v6macassoc.objects.DeviceRouterLinux.type) ) {
                System.out.println("Lets insert some ipv6neighs");
-              owner.getDatabaseEngine().insertArrayList("ipv6neigh",((DeviceRouter)dev).getNeighborList() );
+              owner.getDatabaseEngine().insertArrayList("ipv6neigh",((DeviceRouter)_dev).getNeighborList() );
            }
-           
-        } catch(IOException ioe) {
-            System.out.println(_class+"/run - "+ioe);
-        } catch(JSchException jse) {
-            System.out.println(_class+"/run - "+jse);
-        }
-
+        
+        } catch(IOException | JSchException ex) { 
+            System.out.println(_CLASS+"/run - "+ex);
+        } 
         System.out.println(Thread.currentThread().getName()+" End.");
     }
     
    private ChannelShell connectSSH() throws JSchException {
-        if(session !=null) {
-            if(session.isConnected()) {
-                System.out.println(_class+"/connectSSH - session already connnected....better disconnect it.");
-                session.disconnect();
+        if(_session !=null) {
+            if(_session.isConnected()) {
+                System.out.println(_CLASS+"/connectSSH - session already connnected....better disconnect it.");
+                _session.disconnect();
             }
         } 
-        session = jsch.getSession(dev.getUsername(), dev.getIPAddr(), dev.getPort());
-        session.setPassword(dev.getPassword());
+        _session = _jsch.getSession(_dev.getUsername(), _dev.getIPAddr(), _dev.getPort());
+        _session.setPassword(_dev.getPassword());
         
 
         Properties config = new Properties();
         config.put("StrictHostKeyChecking", "no");
-        session.setConfig(config);
-        session.connect(60000);
+        _session.setConfig(config);
+        _session.connect(60000);
         
-        return (ChannelShell)session.openChannel("shell");
+        return (ChannelShell)_session.openChannel("shell");
     }
    
     private Expect buildExpect(ChannelShell channel) throws IOException {
@@ -112,14 +109,14 @@ public class DeviceWorkerThread implements Runnable {
         if ( dev instanceof v6macassoc.objects.DeviceRouterIOS) 
             return v6macassoc.objects.DeviceRouterIOS._TYPE;
         else if ( dev instanceof v6macassoc.objects.DeviceRouterIOSASA) 
-            return v6macassoc.objects.DeviceRouterIOSASA._TYPE;
+            return v6macassoc.objects.DeviceRouterIOSASA.type;
         else if ( dev instanceof v6macassoc.objects.DeviceRouterLinux) 
-            return v6macassoc.objects.DeviceRouterLinux._TYPE;
+            return v6macassoc.objects.DeviceRouterLinux.type;
         else
             return "UNKNOWN";
     }
     
     @Override public String toString(){
-        return this.command;
+        return this._command;
     }
 }

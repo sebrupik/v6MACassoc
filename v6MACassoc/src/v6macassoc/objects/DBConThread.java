@@ -12,7 +12,7 @@ public class DBConThread implements Runnable {
     DBConnection dbcon;
     boolean running;
     Random rand;
-    ConcurrentLinkedQueue input;
+    ConcurrentLinkedQueue<Object[]> input;
     PreparedStatement insertNeighPS;
     
     public DBConThread(DBConnection dbcon) {
@@ -21,7 +21,7 @@ public class DBConThread implements Runnable {
         this.running = true;
         this.rand = new Random();
         this._class = this.getClass().getName();
-        input = new ConcurrentLinkedQueue();
+        input = new ConcurrentLinkedQueue<>();
         
         insertNeighPS = dbcon.getPS("ps_insert_ipv6_neighbour_table");
     }
@@ -44,8 +44,15 @@ public class DBConThread implements Runnable {
     }
     
     private void insertNeighs(ArrayList al) {
+        int i = 0;
+        int size = al.size();
+        boolean printedAlready = false;
+        boolean modulus = false;
+        System.out.print("x/"+size+"[");
+        
         ipv6neigh i6n;
         Iterator<ipv6neigh> it = al.iterator();
+        
         while(it.hasNext()) {
             i6n = it.next();
             try {
@@ -57,10 +64,22 @@ public class DBConThread implements Runnable {
                 insertNeighPS.setString(4, i6n.getState());
                 insertNeighPS.setString(5, i6n.getInterface());
                 insertNeighPS.setString(6, i6n.getDatasource());
+                insertNeighPS.setTimestamp(7, new java.sql.Timestamp(i6n.getTimestamp()));
                 
                 dbcon.executeUpdate(insertNeighPS);
                 
             } catch(java.sql.SQLException sqle) { System.out.println(_class+"/insertNeighs - "+sqle); }
+            
+            i++;
+            modulus = (((i*100)/size)%10==0);
+
+            if(modulus & !printedAlready) {
+                printedAlready = true;
+                System.out.print(".");
+            }
+            if(!modulus) 
+                printedAlready = false;
         }
+        System.out.print("] 100%");
     }
 }
