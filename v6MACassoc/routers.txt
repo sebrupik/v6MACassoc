@@ -1,5 +1,5 @@
 #ROUTER_IOS;10.10.30.1:22;admin;password;enablePassword
-ROUTER_LINUX;127.0.0.1:2221;snr;KA52hokum
+ROUTER_LINUX;127.0.0.1:2221;dude:password
 #ROUTER_LINUX;127.0.0.1:22;v6macassoc;password
 #ROUTER_IOS_ASA;10.10.30.254:22;cisco;cisco;Cisco
 #RADIUS;10.10.30.128:3306;admin;password 
