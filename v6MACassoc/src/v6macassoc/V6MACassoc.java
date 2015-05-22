@@ -5,6 +5,7 @@ import v6macassoc.objects.Device;
 import v6macassoc.objects.DeviceRouterIOS;
 import v6macassoc.objects.DeviceRouterIOSASA;
 import v6macassoc.objects.DeviceRouterLinux;
+import v6macassoc.objects.ShutdownThread;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -25,6 +26,8 @@ public final class V6MACassoc {
     
     public V6MACassoc(String rtrTxt, String settingsTxt, String psTxt, boolean daemon) {
         this._CLASS = this.getClass().getName();
+        
+        Runtime.getRuntime().addShutdownHook(new ShutdownThread(this));
         
         try {
             _sysProps = this.loadPropsFromFile(settingsTxt, true);
@@ -61,6 +64,12 @@ public final class V6MACassoc {
                 ie.printStackTrace();
             }
         }
+    }
+    
+    public void shutdownThreads() {
+        System.out.println(_CLASS+"/shutdownThreads - starting");
+        _dpEngine.shutdown();
+        _dEngine.shutdown();
     }
     
     private void createDBConnection(String ip, String u, String p) {
@@ -146,6 +155,8 @@ public final class V6MACassoc {
     public Object saveSysProperty(String key, String value) { return _sysProps.setProperty(key, value); }
 
     public static void main(String[] args) {
+        
+        
         boolean d = false;
         //for(int i = 0; i < args.length; i++) {
         for(String arg : args) {

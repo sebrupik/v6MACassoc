@@ -59,7 +59,6 @@ public class DeviceWorkerThread implements Runnable {
                System.out.println("Lets insert some ipv6neighs");
               owner.getDatabaseEngine().insertArrayList("ipv6neigh",((DeviceRouter)_dev).getNeighborList() );
            }
-        
         } catch(IOException | JSchException ex) { 
             System.out.println(_CLASS+"/run - "+ex);
         } 

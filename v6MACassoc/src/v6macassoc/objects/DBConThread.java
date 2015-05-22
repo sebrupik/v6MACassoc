@@ -8,7 +8,7 @@ import java.util.Random;
 
 
 public class DBConThread implements Runnable {
-    private final String _class;
+    private final String _CLASS;
     DBConnection dbcon;
     boolean running;
     Random rand;
@@ -20,7 +20,7 @@ public class DBConThread implements Runnable {
         
         this.running = true;
         this.rand = new Random();
-        this._class = this.getClass().getName();
+        this._CLASS = this.getClass().getName();
         input = new ConcurrentLinkedQueue<>();
         
         insertNeighPS = dbcon.getPS("ps_insert_ipv6_neighbour_table");
@@ -29,11 +29,15 @@ public class DBConThread implements Runnable {
     @Override public void run() {
         while(running) {
             if(input.size()>0) {
-                Object[] obj =(Object[]) input.poll();
-                if(obj != null) {
-                    switch (obj[0].toString()) {
-                        case "ipv6neigh" : this.insertNeighs((ArrayList)obj[1]);
+                if(dbcon.isConnected()) {
+                    Object[] obj =(Object[]) input.poll();
+                    if(obj != null) {
+                        switch (obj[0].toString()) {
+                            case "ipv6neigh" : this.insertNeighs((ArrayList)obj[1]);
+                        }
                     }
+                } else {
+                    System.out.println(_CLASS+"/run - sucessfully recreated dbconnection? : "+dbcon.recreateConnection());
                 }
             }
         }
@@ -68,7 +72,7 @@ public class DBConThread implements Runnable {
                 
                 dbcon.executeUpdate(insertNeighPS);
                 
-            } catch(java.sql.SQLException sqle) { System.out.println(_class+"/insertNeighs - "+sqle); }
+            } catch(java.sql.SQLException sqle) { System.out.println(_CLASS+"/insertNeighs - "+sqle); }
             
             i++;
             modulus = (((i*100)/size)%10==0);
