@@ -5,7 +5,7 @@ import v6macassoc.objects.Device;
 import v6macassoc.objects.DeviceRouterIOS;
 import v6macassoc.objects.DeviceRouterIOSASA;
 import v6macassoc.objects.DeviceRouterLinux;
-import v6macassoc.objects.ShutdownThread;
+import v6macassoc.objects.ShutdownThread; 
 
 import java.io.BufferedReader;
 import java.io.FileReader;
