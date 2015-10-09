@@ -46,11 +46,12 @@ public final class V6MACassoc {
                 _dEngine.execute();
                 _dpEngine.execute();
                 
+                System.out.println("Will you shutdown?");
                 _dpEngine.shutdown();
                 _dEngine.shutdown();
+                System.out.println("Now you have!");
             }
         } catch (IOException ioe) { System.out.println(_CLASS+"/"+ioe); }
-            
     }
     
     private void runAsDaemon(int epoch) {

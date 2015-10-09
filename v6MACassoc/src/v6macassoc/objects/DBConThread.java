@@ -85,5 +85,8 @@ public class DBConThread implements Runnable {
                 printedAlready = false;
         }
         System.out.print("] 100%");
+        
+        // OK so we processed the arraylist, I reckon this task is finished.
+        this.running = false;
     }
 }
