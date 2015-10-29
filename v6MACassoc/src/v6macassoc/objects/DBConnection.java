@@ -9,19 +9,19 @@ import java.sql.*;
 
 public class DBConnection {
     private final String _class;
-    private final String _server="127.0.0.1";
-    private final String _username="root";
-    private final String _password="password";
+    private String _server="127.0.0.1";
+    private String _username="root";
+    private String _password="password";
 
-    private String server, username, password;
+    //private String server, username, password;
     private Connection dbcon;
     private HashMap<String, PreparedStatement> psHash;
     Properties psProps;
 
     public DBConnection(String server, String username, String password, Properties psProps)  {
-        this.server = server;
-        this.username = username;
-        this.password = password;
+        this._server = server;
+        this._username = username;
+        this._password = password;
         this.psProps = psProps;
 
         this._class = this.getClass().getName();
@@ -40,7 +40,7 @@ public class DBConnection {
     }
 
     public boolean recreateConnection() {
-        this.createConnection(server, username, password);
+        this.createConnection(_server, _username, _password);
 
         return true;
     }

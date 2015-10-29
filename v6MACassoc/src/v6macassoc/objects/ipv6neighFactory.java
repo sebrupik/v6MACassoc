@@ -111,7 +111,6 @@ class ipv6neighFactory {
              elements = oriMAC.split(":");
         }
         if(elements!=null) {
-            //for (int i=0;i<elements.length;i++)
             for(String element : elements) 
                 output+=element;
         }

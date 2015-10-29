@@ -2,8 +2,8 @@ package v6macassoc;
 
 import v6macassoc.objects.DBConnection;
 import v6macassoc.objects.Device;
-import v6macassoc.objects.DeviceRouterIOS;
-import v6macassoc.objects.DeviceRouterIOSASA;
+import v6macassoc.objects.DeviceRouterCiscoIOS;
+import v6macassoc.objects.DeviceRouterCiscoASA;
 import v6macassoc.objects.DeviceRouterLinux;
 import v6macassoc.objects.ShutdownThread; 
 
@@ -85,16 +85,16 @@ public final class V6MACassoc {
             while ((line = br.readLine()) != null) {
                 if (!line.startsWith("#")) {
                     items = line.split(";");
-                    if(items[0].equals(v6macassoc.objects.DeviceRouterIOS._TYPE)) {
-                        if((items.length-1)== v6macassoc.objects.DeviceRouterIOS._ARGUMENTS)
-                            _devices.put(items[1], new DeviceRouterIOS(items));
+                    if(items[0].equals(v6macassoc.objects.DeviceRouterCiscoIOS.type)) {
+                        if((items.length-1)== v6macassoc.objects.DeviceRouterCiscoIOS.arguments)
+                            _devices.put(items[1], new DeviceRouterCiscoIOS(items));
                         else 
-                            System.out.println(_CLASS+"/createDevices - you have the incorrect number of arguments ("+items.length+") to create a DeviceRouterIOS ("+v6macassoc.objects.DeviceRouterIOS._ARGUMENTS+")");
-                    } else if(items[0].equals(v6macassoc.objects.DeviceRouterIOSASA.type)) {
-                        if((items.length-1)== v6macassoc.objects.DeviceRouterIOSASA.arguments)
-                            _devices.put(items[1], new DeviceRouterIOSASA(items));
+                            System.out.println(_CLASS+"/createDevices - you have the incorrect number of arguments ("+items.length+") to create a DeviceRouterIOS ("+v6macassoc.objects.DeviceRouterCiscoIOS.arguments+")");
+                    } else if(items[0].equals(v6macassoc.objects.DeviceRouterCiscoASA.type)) {
+                        if((items.length-1)== v6macassoc.objects.DeviceRouterCiscoASA.arguments)
+                            _devices.put(items[1], new DeviceRouterCiscoASA(items));
                         else 
-                            System.out.println(_CLASS+"/createDevices - you have the incorrect number of arguments ("+items.length+") to create a DeviceRouterIOSASA ("+v6macassoc.objects.DeviceRouterIOSASA.arguments+")");
+                            System.out.println(_CLASS+"/createDevices - you have the incorrect number of arguments ("+items.length+") to create a DeviceRouterIOSASA ("+v6macassoc.objects.DeviceRouterCiscoASA.arguments+")");
                     } else if(items[0].equals(v6macassoc.objects.DeviceRouterLinux.type)) {
                         if((items.length-1)== v6macassoc.objects.DeviceRouterLinux.arguments)
                             _devices.put(items[1], new DeviceRouterLinux(items));
@@ -156,10 +156,7 @@ public final class V6MACassoc {
     public Object saveSysProperty(String key, String value) { return _sysProps.setProperty(key, value); }
 
     public static void main(String[] args) {
-        
-        
         boolean d = false;
-        //for(int i = 0; i < args.length; i++) {
         for(String arg : args) {
             if(arg.equals("--daemon"))
                 d = true;

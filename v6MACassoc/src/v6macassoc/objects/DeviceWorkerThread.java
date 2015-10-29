@@ -53,8 +53,8 @@ public class DeviceWorkerThread implements Runnable {
            System.out.println("finsihed processCommand");
            
            //now dump the command result to a DB...
-           if(_TYPE.equals(v6macassoc.objects.DeviceRouterIOS._TYPE) |
-              _TYPE.equals(v6macassoc.objects.DeviceRouterIOSASA.type) |
+           if(_TYPE.equals(v6macassoc.objects.DeviceRouterCiscoIOS.type) |
+              _TYPE.equals(v6macassoc.objects.DeviceRouterCiscoASA.type) |
               _TYPE.equals(v6macassoc.objects.DeviceRouterLinux.type) ) {
                System.out.println("Lets insert some ipv6neighs");
               owner.getDatabaseEngine().insertArrayList("ipv6neigh",((DeviceRouter)_dev).getNeighborList() );
@@ -105,10 +105,10 @@ public class DeviceWorkerThread implements Runnable {
     }
     
     private String getDeviceType(Device dev) {
-        if ( dev instanceof v6macassoc.objects.DeviceRouterIOS) 
-            return v6macassoc.objects.DeviceRouterIOS._TYPE;
-        else if ( dev instanceof v6macassoc.objects.DeviceRouterIOSASA) 
-            return v6macassoc.objects.DeviceRouterIOSASA.type;
+        if ( dev instanceof v6macassoc.objects.DeviceRouterCiscoIOS) 
+            return v6macassoc.objects.DeviceRouterCiscoIOS.type;
+        else if ( dev instanceof v6macassoc.objects.DeviceRouterCiscoASA) 
+            return v6macassoc.objects.DeviceRouterCiscoASA.type;
         else if ( dev instanceof v6macassoc.objects.DeviceRouterLinux) 
             return v6macassoc.objects.DeviceRouterLinux.type;
         else
