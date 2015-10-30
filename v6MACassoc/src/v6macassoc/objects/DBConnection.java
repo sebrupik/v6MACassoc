@@ -189,7 +189,9 @@ public class DBConnection {
         return false;  //added 2006/12/05  possibly revert back to above line
     }
 
-
+    public Statement createStatement() throws SQLException {
+        return dbcon.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+    }
     /*private void saveProperties(String key, String value) {
         try {
             java.security.AccessController.checkPermission(new FilePermission("client.properties","write"));

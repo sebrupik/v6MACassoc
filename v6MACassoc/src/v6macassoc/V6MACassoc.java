@@ -24,6 +24,8 @@ public final class V6MACassoc {
     
     DBConnection dbcon;
     
+    
+    
     public V6MACassoc(String rtrTxt, String settingsTxt, String psTxt, boolean daemon) {
         this._CLASS = this.getClass().getName();
         
@@ -54,12 +56,12 @@ public final class V6MACassoc {
         } catch (IOException ioe) { System.out.println(_CLASS+"/"+ioe); }
     }
     
-    private void runAsDaemon(int epoch) {
+    private void runAsDaemon(int interval) {
         while(true) {
             _dEngine.execute();
             _dpEngine.execute();
             try {
-                Thread.sleep(epoch);
+                Thread.sleep(interval);
             } catch(InterruptedException ie) {
                 System.out.println(_CLASS+"/runAsDaemon - exception");
                 ie.printStackTrace();
