@@ -6,7 +6,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.Iterator;
 import java.util.Random;
 
-
 public class DBConThread implements Runnable {
     private final String _CLASS;
     DBConnection dbcon;
