@@ -25,7 +25,6 @@ public final class V6MACassoc {
     DBConnection dbcon;
     
     
-    
     public V6MACassoc(String rtrTxt, String settingsTxt, String psTxt, boolean daemon) {
         this._CLASS = this.getClass().getName();
         
